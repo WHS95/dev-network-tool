@@ -27,7 +27,11 @@
       <div class="view-container" id="requestsView">
         <div class="panel-container">
           <!-- Compact mode toggle -->
-          <button id="panelToggle" class="panel-toggle hidden" title="목록 토글">
+          <button
+            id="panelToggle"
+            class="panel-toggle hidden"
+            title="목록 토글"
+          >
             ◀
           </button>
 
@@ -71,6 +75,13 @@
                   <button class="filter-btn" data-status="5xx">5xx</button>
                 </div>
               </div>
+            </div>
+
+            <!-- Sort control -->
+            <div class="sort-bar">
+              <span class="sort-label">정렬</span>
+              <button class="sort-btn active" id="sortNewest" data-sort="newest">최신순</button>
+              <button class="sort-btn" id="sortOldest" data-sort="oldest">과거순</button>
             </div>
 
             <!-- Request list -->
@@ -158,10 +169,7 @@
                   <div class="response-section">
                     <div class="response-body-header">
                       <span>Response Body</span>
-                      <button
-                        class="copy-btn copy-btn-sm"
-                        id="copyResponseBtn"
-                      >
+                      <button class="copy-btn copy-btn-sm" id="copyResponseBtn">
                         Copy
                       </button>
                     </div>
@@ -196,11 +204,7 @@
             </div>
 
             <div class="request-list-wrapper">
-              <ul
-                class="request-list"
-                id="pageList"
-                role="listbox"
-              ></ul>
+              <ul class="request-list" id="pageList" role="listbox"></ul>
             </div>
 
             <div class="bottom-actions">

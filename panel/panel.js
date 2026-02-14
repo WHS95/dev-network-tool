@@ -18,6 +18,7 @@
     filteredHeaders: [],
     activeTab: "curl", // curl | fetch | axios | response
     selectedEntry: null,
+    sortOrder: "newest", // newest | oldest
     // v2.0: Screen Map state
     activeView: "requests", // requests | screenmap
     screenMap: null,
@@ -117,10 +118,7 @@
 
     // Update tab active state
     qsAll(".top-nav-tab").forEach(function (t) {
-      t.classList.toggle(
-        "active",
-        t.getAttribute("data-view") === viewName,
-      );
+      t.classList.toggle("active", t.getAttribute("data-view") === viewName);
     });
 
     // Show/hide views
@@ -152,7 +150,7 @@
     var allMethods = methods.indexOf("ALL") !== -1;
     var allStatuses = statuses.indexOf("ALL") !== -1;
 
-    return state.requests.filter(function (entry) {
+    var filtered = state.requests.filter(function (entry) {
       var req = entry.request || {};
       var res = entry.response || {};
       var path = getPathname(req.url || "");
@@ -165,6 +163,13 @@
       if (!allStatuses && statuses.indexOf(statusClass) === -1) return false;
       return true;
     });
+
+    // Sort: newest first reverses the array (requests are appended in order)
+    if (state.sortOrder === "newest") {
+      filtered = filtered.slice().reverse();
+    }
+
+    return filtered;
   }
 
   // Render request list
@@ -646,6 +651,22 @@
         updateDetailIfSelected();
       });
     });
+
+    // Sort buttons
+    qsAll(".sort-btn").forEach(function (btn) {
+      btn.addEventListener("click", function () {
+        var sort = btn.getAttribute("data-sort");
+        if (!sort || sort === state.sortOrder) return;
+        state.sortOrder = sort;
+        qsAll(".sort-btn").forEach(function (b) {
+          b.classList.toggle("active", b.getAttribute("data-sort") === sort);
+        });
+        state.selectedIndex = -1;
+        state.selectedEntry = null;
+        renderRequestList();
+        showEmptyState();
+      });
+    });
   }
 
   function updateDetailIfSelected() {
@@ -872,7 +893,8 @@
   // ─── Page List Rendering ───
 
   function getFilteredPages() {
-    if (!state.screenMap || !state.screenMap.pages) return { scanned: [], unscanned: [] };
+    if (!state.screenMap || !state.screenMap.pages)
+      return { scanned: [], unscanned: [] };
 
     var pages = state.screenMap.pages;
     var search = state.pageSearch.trim().toLowerCase();
@@ -919,7 +941,8 @@
     filtered.scanned.forEach(function (page) {
       var li = document.createElement("li");
       var isSelected = state.selectedPageUrl === page.url;
-      li.className = "request-item sm-page-item" + (isSelected ? " selected" : "");
+      li.className =
+        "request-item sm-page-item" + (isSelected ? " selected" : "");
       li.setAttribute("role", "option");
 
       var displayName = page.route || page.url;
@@ -930,11 +953,19 @@
         '<div class="sm-page-row">' +
         '<span class="sm-scan-status scanned">✅</span>' +
         '<div class="sm-page-info-col">' +
-        '<span class="sm-page-name" title="' + escapeHtml(displayName) + '">' + escapeHtml(displayName) + "</span>" +
+        '<span class="sm-page-name" title="' +
+        escapeHtml(displayName) +
+        '">' +
+        escapeHtml(displayName) +
+        "</span>" +
         (page.route && page.url !== page.route
           ? '<span class="sm-page-url">' + escapeHtml(page.url) + "</span>"
           : "") +
-        '<span class="sm-page-meta">' + escapeHtml(timeAgo) + " · API " + apiCount + "개</span>" +
+        '<span class="sm-page-meta">' +
+        escapeHtml(timeAgo) +
+        " · API " +
+        apiCount +
+        "개</span>" +
         "</div>" +
         "</div>";
 
@@ -954,7 +985,9 @@
         '<div class="sm-page-row">' +
         '<span class="sm-scan-status">⬜</span>' +
         '<div class="sm-page-info-col">' +
-        '<span class="sm-page-name">' + escapeHtml(url) + "</span>" +
+        '<span class="sm-page-name">' +
+        escapeHtml(url) +
+        "</span>" +
         '<span class="sm-page-meta">(스캔 안 됨)</span>' +
         "</div>" +
         "</div>";
@@ -985,7 +1018,11 @@
   }
 
   function renderPageDetail(url) {
-    if (!state.screenMap || !state.screenMap.pages || !state.screenMap.pages[url]) {
+    if (
+      !state.screenMap ||
+      !state.screenMap.pages ||
+      !state.screenMap.pages[url]
+    ) {
       updateScreenMapEmptyState();
       return;
     }
@@ -1035,29 +1072,52 @@
             schemaHtml +=
               '<div class="sm-schema-row">' +
               '<span class="sm-schema-label">Request:</span>' +
-              '<span class="sm-schema-value">' + escapeHtml(formatSchema(api.requestSchema)) + "</span>" +
+              '<span class="sm-schema-value">' +
+              escapeHtml(formatSchema(api.requestSchema)) +
+              "</span>" +
               "</div>";
           }
           if (api.responseSchema) {
             schemaHtml +=
               '<div class="sm-schema-row">' +
               '<span class="sm-schema-label">Response:</span>' +
-              '<span class="sm-schema-value">' + escapeHtml(formatSchema(api.responseSchema)) + "</span>" +
+              '<span class="sm-schema-value">' +
+              escapeHtml(formatSchema(api.responseSchema)) +
+              "</span>" +
               "</div>";
           }
           if (!api.requestSchema && !api.responseSchema) {
-            schemaHtml = '<div class="sm-schema-row"><span class="sm-schema-label">(스키마 없음)</span></div>';
+            schemaHtml =
+              '<div class="sm-schema-row"><span class="sm-schema-label">(스키마 없음)</span></div>';
           }
 
           card.innerHTML =
             '<div class="sm-api-header">' +
-            '<span class="method-badge ' + methodClass + '">' + escapeHtml(api.method) + "</span>" +
-            '<span class="sm-api-path" title="' + escapeHtml(api.path) + '">' + escapeHtml(api.path) + "</span>" +
-            '<span class="request-status status-' + statusClass + '">' + escapeHtml(String(api.status)) + "</span>" +
-            '<span class="sm-api-time">' + (api.time || 0) + "ms</span>" +
-            '<button class="sm-curl-btn" data-api-index="' + idx + '" title="curl 복사">curl 📋</button>' +
+            '<span class="method-badge ' +
+            methodClass +
+            '">' +
+            escapeHtml(api.method) +
+            "</span>" +
+            '<span class="sm-api-path" title="' +
+            escapeHtml(api.path) +
+            '">' +
+            escapeHtml(api.path) +
+            "</span>" +
+            '<span class="request-status status-' +
+            statusClass +
+            '">' +
+            escapeHtml(String(api.status)) +
+            "</span>" +
+            '<span class="sm-api-time">' +
+            (api.time || 0) +
+            "ms</span>" +
+            '<button class="sm-curl-btn" data-api-index="' +
+            idx +
+            '" title="curl 복사">curl 📋</button>' +
             "</div>" +
-            '<div class="sm-api-body">' + schemaHtml + "</div>";
+            '<div class="sm-api-body">' +
+            schemaHtml +
+            "</div>";
 
           // Curl copy button
           var curlBtn = card.querySelector(".sm-curl-btn");
@@ -1083,16 +1143,23 @@
       linkListEl.innerHTML = "";
 
       if (links.length === 0) {
-        linkListEl.innerHTML = '<div class="sm-no-data">연결된 페이지 없음</div>';
+        linkListEl.innerHTML =
+          '<div class="sm-no-data">연결된 페이지 없음</div>';
       } else {
         links.forEach(function (link) {
           var div = document.createElement("div");
           div.className = "sm-link-item";
           var isScanned = state.screenMap.pages && state.screenMap.pages[link];
           div.innerHTML =
-            '<span class="sm-link-status">' + (isScanned ? "✅" : "⬜") + "</span>" +
-            '<span class="sm-link-path">' + escapeHtml(link) + "</span>" +
-            '<span class="sm-link-label">' + (isScanned ? "스캔 완료" : "스캔 안 됨") + "</span>";
+            '<span class="sm-link-status">' +
+            (isScanned ? "✅" : "⬜") +
+            "</span>" +
+            '<span class="sm-link-path">' +
+            escapeHtml(link) +
+            "</span>" +
+            '<span class="sm-link-label">' +
+            (isScanned ? "스캔 완료" : "스캔 안 됨") +
+            "</span>";
 
           if (isScanned) {
             div.style.cursor = "pointer";
