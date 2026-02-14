@@ -397,6 +397,7 @@
 
     var resp = window.CodeGenerator.extractResponse(entry);
 
+    // Render headers immediately
     var headersBody = getEl("responseHeadersBody");
     var headerCount = getEl("headerCount");
 
@@ -419,18 +420,54 @@
       headerCount.textContent = resp.headers.length;
     }
 
+    // Response body: HAR content.text is often empty in Chrome DevTools.
+    // Must use entry.getContent() to fetch the actual body asynchronously.
     var bodyEl = getEl("responseBody");
-    if (bodyEl) {
-      if (resp.bodyParsed) {
-        var prettyJson = JSON.stringify(resp.bodyParsed, null, 2);
+    if (!bodyEl) return;
+
+    // If content.text already exists, use it
+    if (resp.body) {
+      renderResponseBody(bodyEl, resp.body, resp.mimeType);
+      return;
+    }
+
+    // Otherwise fetch via getContent()
+    if (typeof entry.getContent === "function") {
+      bodyEl.innerHTML =
+        '<span class="syn-comment">// Loading response body...</span>';
+      entry.getContent(function (content, mimeType) {
+        // Verify we're still showing the same entry
+        if (state.selectedEntry !== entry) return;
+        if (content) {
+          var effectiveMime = mimeType || resp.mimeType || "";
+          renderResponseBody(bodyEl, content, effectiveMime);
+        } else {
+          bodyEl.innerHTML =
+            '<span class="syn-comment">// No response body</span>';
+        }
+      });
+    } else {
+      bodyEl.innerHTML =
+        '<span class="syn-comment">// No response body</span>';
+    }
+  }
+
+  function renderResponseBody(bodyEl, body, mimeType) {
+    if (!bodyEl || !body) return;
+    var mime = (mimeType || "").toLowerCase();
+
+    if (mime.indexOf("application/json") !== -1 || mime.indexOf("json") !== -1) {
+      try {
+        var parsed = JSON.parse(body);
+        var prettyJson = JSON.stringify(parsed, null, 2);
         bodyEl.innerHTML = highlightJson(prettyJson);
-      } else if (resp.body) {
-        bodyEl.textContent = resp.body;
-      } else {
-        bodyEl.innerHTML =
-          '<span class="syn-comment">// No response body</span>';
+        return;
+      } catch (e) {
+        // Not valid JSON, fall through to raw display
       }
     }
+
+    bodyEl.textContent = body;
   }
 
   // ─── Tab Management ───
