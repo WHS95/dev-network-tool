@@ -1,0 +1,313 @@
+/**
+ * DevCurl Settings - Header Filter Settings styles
+ * Same CSS variables as panel.css (dark/light theme), DevTools style
+ */
+
+:root {
+  --bg-primary: #1e1e1e;
+  --bg-secondary: #252526;
+  --bg-tertiary: #2d2d30;
+  --bg-hover: #2a2d2e;
+  --bg-active: #37373d;
+  --text-primary: #cccccc;
+  --text-secondary: #969696;
+  --text-muted: #6e6e6e;
+  --border-color: #3c3c3c;
+  --accent-color: #007acc;
+  --accent-hover: #1a8ad4;
+  --shadow: rgba(0, 0, 0, 0.3);
+  --code-bg: #1a1a1a;
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --radius-lg: 8px;
+  --transition: 0.15s ease;
+}
+
+@media (prefers-color-scheme: light) {
+  :root {
+    --bg-primary: #ffffff;
+    --bg-secondary: #f3f3f3;
+    --bg-tertiary: #e8e8e8;
+    --bg-hover: #e5e5e5;
+    --bg-active: #d4d4d4;
+    --text-primary: #333333;
+    --text-secondary: #666666;
+    --text-muted: #999999;
+    --border-color: #d4d4d4;
+    --accent-color: #0066b3;
+    --accent-hover: #005a9e;
+    --shadow: rgba(0, 0, 0, 0.1);
+    --code-bg: #f5f5f5;
+  }
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  min-height: 100%;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+  font-size: 12px;
+  color: var(--text-primary);
+  background: var(--bg-primary);
+}
+
+.settings-container {
+  max-width: 480px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+/* Header */
+.settings-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.settings-title {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.close-btn {
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  background: var(--bg-tertiary);
+  color: var(--text-primary);
+  font-size: 20px;
+  line-height: 1;
+  cursor: pointer;
+  transition: all var(--transition);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.close-btn:hover {
+  background: var(--bg-hover);
+  border-color: var(--text-muted);
+}
+
+/* Section cards */
+.settings-section {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  padding: 14px 18px;
+  margin-bottom: 16px;
+  box-shadow: 0 1px 3px var(--shadow);
+}
+
+.section-label {
+  margin: 0 0 10px;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--text-secondary);
+}
+
+.section-hint {
+  margin: 0 0 10px;
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+/* Preset buttons */
+.preset-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.preset-btn {
+  padding: 8px 14px;
+  font-size: 12px;
+  font-weight: 500;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  background: var(--bg-tertiary);
+  color: var(--text-primary);
+  cursor: pointer;
+  transition: all var(--transition);
+}
+
+.preset-btn:hover {
+  background: var(--bg-hover);
+  border-color: var(--text-muted);
+}
+
+.preset-btn.active {
+  background: var(--accent-color);
+  border-color: var(--accent-color);
+  color: white;
+}
+
+/* Header list - collapsible groups */
+.header-list {
+  max-height: 280px;
+  overflow-y: auto;
+}
+
+.header-group {
+  margin-bottom: 12px;
+}
+
+.header-group:last-child {
+  margin-bottom: 0;
+}
+
+.group-header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 0;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  cursor: pointer;
+  user-select: none;
+  transition: color var(--transition);
+}
+
+.group-header:hover {
+  color: var(--text-primary);
+}
+
+.group-header .toggle-icon {
+  font-size: 10px;
+  transition: transform var(--transition);
+}
+
+.header-group.collapsed .toggle-icon {
+  transform: rotate(-90deg);
+}
+
+.header-group.collapsed .group-items {
+  display: none;
+}
+
+.group-items {
+  padding-left: 16px;
+}
+
+.header-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 0;
+  cursor: pointer;
+  transition: background var(--transition);
+  border-radius: var(--radius-sm);
+}
+
+.header-item:hover {
+  background: var(--bg-hover);
+}
+
+.header-item input[type="checkbox"] {
+  flex-shrink: 0;
+  width: 14px;
+  height: 14px;
+  margin: 0;
+  cursor: pointer;
+  accent-color: var(--accent-color);
+}
+
+.header-item .header-name {
+  font-family: 'SF Mono', Monaco, 'Cascadia Code', monospace;
+  font-size: 12px;
+  color: var(--text-primary);
+}
+
+/* Add custom header */
+.add-header-row {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.add-header-row input {
+  flex: 1;
+  padding: 8px 12px;
+  font-size: 12px;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  background: var(--bg-tertiary);
+  color: var(--text-primary);
+  outline: none;
+  transition: border-color var(--transition);
+}
+
+.add-header-row input:focus {
+  border-color: var(--accent-color);
+}
+
+.add-header-row input::placeholder {
+  color: var(--text-muted);
+}
+
+.add-btn {
+  padding: 8px 16px;
+  font-size: 12px;
+  font-weight: 500;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  background: var(--accent-color);
+  color: white;
+  cursor: pointer;
+  transition: all var(--transition);
+  flex-shrink: 0;
+}
+
+.add-btn:hover {
+  background: var(--accent-hover);
+}
+
+.error-msg {
+  margin: 8px 0 0;
+  font-size: 11px;
+  color: #f44336;
+}
+
+.error-msg.hidden {
+  display: none;
+}
+
+/* Reset button */
+.reset-btn {
+  width: 100%;
+  padding: 10px 16px;
+  font-size: 12px;
+  font-weight: 500;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  background: var(--bg-tertiary);
+  color: var(--text-primary);
+  cursor: pointer;
+  transition: all var(--transition);
+}
+
+.reset-btn:hover {
+  background: var(--bg-hover);
+}
+
+/* Empty state for header list */
+.header-list-empty {
+  padding: 16px;
+  text-align: center;
+  color: var(--text-muted);
+  font-size: 12px;
+}

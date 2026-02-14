@@ -1,0 +1,14 @@
+{
+  "manifest_version": 3,
+  "name": "DevCurl - Clean cURL Generator",
+  "version": "1.0.0",
+  "description": "Generate clean curl commands from DevTools network requests. Automatically removes unnecessary browser headers for readable, copy-paste-ready curl.",
+  "devtools_page": "devtools.html",
+  "permissions": ["storage"],
+  "icons": {
+    "16": "icons/icon16.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
+  "minimum_chrome_version": "88"
+}

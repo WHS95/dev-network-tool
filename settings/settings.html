@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>헤더 필터 설정 - DevCurl</title>
+  <link rel="stylesheet" href="settings.css">
+</head>
+<body>
+  <div class="settings-container">
+    <header class="settings-header">
+      <h1 class="settings-title">헤더 필터 설정</h1>
+      <button type="button" id="closeBtn" class="close-btn" aria-label="닫기">×</button>
+    </header>
+
+    <section class="settings-section preset-section">
+      <h2 class="section-label">프리셋</h2>
+      <div class="preset-buttons">
+        <button type="button" class="preset-btn" data-preset="essential">최소 (Essential)</button>
+        <button type="button" class="preset-btn" data-preset="default">기본 (Default)</button>
+        <button type="button" class="preset-btn" data-preset="include-all">전체 포함 (Include all)</button>
+      </div>
+    </section>
+
+    <section class="settings-section header-list-section">
+      <h2 class="section-label">필터 목록</h2>
+      <p class="section-hint">체크된 헤더는 curl에서 제외됩니다.</p>
+      <div id="headerList" class="header-list"></div>
+    </section>
+
+    <section class="settings-section add-header-section">
+      <h2 class="section-label">커스텀 헤더 추가</h2>
+      <div class="add-header-row">
+        <input type="text" id="customHeaderInput" placeholder="헤더 이름 입력" autocomplete="off">
+        <button type="button" id="addHeaderBtn" class="add-btn">추가</button>
+      </div>
+      <p id="addError" class="error-msg hidden"></p>
+    </section>
+
+    <section class="settings-section actions-section">
+      <button type="button" id="resetBtn" class="reset-btn">기본값으로 초기화</button>
+    </section>
+  </div>
+
+  <script src="../lib/header-filter.js"></script>
+  <script src="settings.js"></script>
+</body>
+</html>

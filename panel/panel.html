@@ -1,0 +1,149 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>DevCurl Panel</title>
+    <link rel="stylesheet" href="panel.css" />
+  </head>
+  <body>
+    <div class="panel-container">
+      <!-- Compact mode toggle -->
+      <button id="panelToggle" class="panel-toggle hidden" title="목록 토글">
+        ◀
+      </button>
+
+      <!-- Left panel: request list -->
+      <div class="left-panel">
+        <div class="filter-section">
+          <!-- URL search -->
+          <div class="search-box">
+            <span class="search-icon">🔍</span>
+            <input
+              type="text"
+              id="urlSearch"
+              placeholder="URL 검색..."
+              autocomplete="off"
+            />
+          </div>
+
+          <div class="filter-buttons">
+            <!-- Method filters -->
+            <div class="filter-group" id="methodFilters">
+              <span class="filter-label">Method</span>
+              <button class="filter-btn active" data-method="ALL">ALL</button>
+              <button class="filter-btn" data-method="GET">GET</button>
+              <button class="filter-btn" data-method="POST">POST</button>
+              <button class="filter-btn" data-method="PUT">PUT</button>
+              <button class="filter-btn" data-method="DELETE">DEL</button>
+              <button class="filter-btn" data-method="PATCH">PATCH</button>
+            </div>
+
+            <!-- Status filters -->
+            <div class="filter-group" id="statusFilters">
+              <span class="filter-label">Status</span>
+              <button class="filter-btn active" data-status="ALL">ALL</button>
+              <button class="filter-btn" data-status="2xx">2xx</button>
+              <button class="filter-btn" data-status="3xx">3xx</button>
+              <button class="filter-btn" data-status="4xx">4xx</button>
+              <button class="filter-btn" data-status="5xx">5xx</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Request list -->
+        <div class="request-list-wrapper">
+          <ul class="request-list" id="requestList" role="listbox"></ul>
+        </div>
+
+        <!-- Bottom actions -->
+        <div class="bottom-actions">
+          <button class="action-btn" id="clearBtn">🗑 초기화</button>
+          <button class="action-btn" id="settingsBtn">⚙ 설정</button>
+        </div>
+      </div>
+
+      <!-- Right panel: detail view -->
+      <div class="right-panel">
+        <div class="detail-view">
+          <!-- Empty state -->
+          <div id="emptyState" class="empty-state">
+            <p>요청을 선택하세요</p>
+            <p class="empty-hint">
+              좌측 목록에서 API 요청을 클릭하면<br />cURL, fetch, axios 코드를
+              확인할 수 있습니다
+            </p>
+          </div>
+
+          <!-- Detail content -->
+          <div id="detailContent" class="detail-content hidden">
+            <!-- Response summary card -->
+            <div class="response-summary-card">
+              <div class="status-row">
+                <span id="statusDot" class="status-dot"></span>
+                <span id="statusCode" class="status-code">—</span>
+                <span id="statusText" class="status-text">—</span>
+              </div>
+              <div class="meta-row">
+                <span class="meta-item" id="contentType">—</span>
+                <span class="meta-item" id="responseTime">—</span>
+              </div>
+            </div>
+
+            <!-- Format tabs -->
+            <div class="detail-tabs">
+              <button class="detail-tab active" data-tab="curl">cURL</button>
+              <button class="detail-tab" data-tab="fetch">fetch</button>
+              <button class="detail-tab" data-tab="axios">axios</button>
+              <button class="detail-tab" data-tab="response">Response</button>
+            </div>
+
+            <!-- Code block (cURL / fetch / axios) -->
+            <div id="codePanel" class="code-panel">
+              <div class="curl-block-wrapper">
+                <button class="copy-btn" id="copyBtn">Copy</button>
+                <pre class="curl-block"><code id="codeOutput"></code></pre>
+              </div>
+            </div>
+
+            <!-- Response panel -->
+            <div id="responsePanel" class="response-panel hidden">
+              <!-- Response headers -->
+              <div class="response-section">
+                <button
+                  class="response-section-toggle"
+                  id="responseHeadersToggle"
+                >
+                  <span class="toggle-icon">▶</span>
+                  <span>Response Headers</span>
+                  <span class="header-count" id="headerCount">0</span>
+                </button>
+                <div id="responseHeaders" class="response-headers collapsed">
+                  <table class="headers-table">
+                    <tbody id="responseHeadersBody"></tbody>
+                  </table>
+                </div>
+              </div>
+
+              <!-- Response body -->
+              <div class="response-section">
+                <div class="response-body-header">
+                  <span>Response Body</span>
+                  <button class="copy-btn copy-btn-sm" id="copyResponseBtn">
+                    Copy
+                  </button>
+                </div>
+                <pre class="response-body"><code id="responseBody"></code></pre>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="../lib/header-filter.js"></script>
+    <script src="../lib/curl-generator.js"></script>
+    <script src="../lib/code-generator.js"></script>
+    <script src="panel.js"></script>
+  </body>
+</html>
