@@ -447,8 +447,7 @@
         }
       });
     } else {
-      bodyEl.innerHTML =
-        '<span class="syn-comment">// No response body</span>';
+      bodyEl.innerHTML = '<span class="syn-comment">// No response body</span>';
     }
   }
 
@@ -456,7 +455,10 @@
     if (!bodyEl || !body) return;
     var mime = (mimeType || "").toLowerCase();
 
-    if (mime.indexOf("application/json") !== -1 || mime.indexOf("json") !== -1) {
+    if (
+      mime.indexOf("application/json") !== -1 ||
+      mime.indexOf("json") !== -1
+    ) {
       try {
         var parsed = JSON.parse(body);
         var prettyJson = JSON.stringify(parsed, null, 2);
